@@ -5,7 +5,7 @@ using namespace std;
 
 void beolvas(int t[], int &i)
 {
-    ifstream in ("be.in");
+    ifstream in ("be.in"); //-1 0 0 1 1 2 5 2 7 7 6 6 3 3 13 14    a FA
 
     while(!in.eof())
     {
