@@ -3,123 +3,111 @@
 
 using namespace std;
 
-void beolvas(int t[], int &i)
+ifstream in ("be.in");
+
+void beolvas(int BAL[],int JOBB[], int &h)
 {
-    ifstream in ("be.in"); //-1 0 0 1 1 2 5 2 7 7 6 6 3 3 13 14    a FA
 
     while(!in.eof())
     {
-        in >> t[i];
-        i++;
+        in >> BAL[h];
+        in >> JOBB[h];
+
+        h++;
     }
-    i--;
+    h--;
+
+    in.close();
 }
 
-void levelek(int APA[], int h, int frek[])
+void preorder(int BAL[],int JOBB[], int gy)
+{
+    cout << gy <<' ';
+    if(BAL[gy]!=-1) preorder(BAL,JOBB,BAL[gy]);
+    if(JOBB[gy]!=-1) preorder(BAL,JOBB,JOBB[gy]);
+}
+
+void inorder(int BAL[],int JOBB[], int gy)
+{
+    if(BAL[gy]!=-1) inorder(BAL,JOBB,BAL[gy]);
+    cout << gy <<' ';
+    if(JOBB[gy]!=-1) inorder(BAL,JOBB,JOBB[gy]);
+}
+
+void postorder(int BAL[],int JOBB[], int gy)
+{
+    if(BAL[gy]!=-1) postorder(BAL,JOBB,BAL[gy]);
+    if(JOBB[gy]!=-1) postorder(BAL,JOBB,JOBB[gy]);
+    cout << gy <<' ';
+}
+
+void levelek(int BAL[], int JOBB[], int h, int level[100])
 {
     for(int i=0; i<h; i++)
     {
-        for(int j=0; j<h; j++)
+        if(BAL[i]==-1 && JOBB[i]==-1)
         {
-            if(APA[j]==i) frek[i]++;
+            level[i]=1;
         }
     }
 }
 
-int kozosos(int APA[],int h, int csp1, int csp2)
+int magassag(int BAL[],int JOBB[],int gy, int m, int maxi)
 {
-    int seged=csp1;
-    int fr[h]={0};
+    if(BAL[gy]!=-1)
+    {
+        m++;
 
-    while(seged!=-1)
-    {
-        fr[seged]++;
-        seged=APA[seged];
-    }
-    seged=csp2;
-    while(fr[seged]==0)
-    {
-        seged=APA[seged];
-    }
-    return seged;
-}
-
-void azonosszint(int APA[], int frek[], int gy, int h, int &hossz)
-{
-    for(int i=0; i<h; i++)
-    {
-        if(APA[i]==gy)
+        magassag(BAL,JOBB,BAL[gy],m, maxi);
+        if(maxi<m)
         {
-            frek[i]=hossz;
-            hossz++;
-            azonosszint(APA,frek,i,h,hossz);
+            maxi=m;
         }
     }
-}
-
-int magassag(int APA[], int h,int csp)
-{
-    int seged=csp;
-    int hossz=0;
-
-    while(seged!=-1)
+    if(JOBB[gy]!=-1)
     {
-        seged=APA[seged];
-        hossz++;
+        m++;
+
+        magassag(BAL,JOBB,JOBB[gy],m, maxi);
+        if(maxi<m)
+        {
+            maxi=m;
+        }
     }
 
-    return hossz;
+    return maxi;
 }
 
 int main()
 {
-    int APA[100];
+    int BAL[100];
+    int JOBB[100];
+
     int h=0;
 
-    beolvas(APA,h);
-
-    int frek[100]={0};
-    levelek(APA,h,frek);
-
-    cout << "levelek: ";
-    for(int i=0; i<h; i++)
-    {
-        if(frek[i]==0) cout << i <<' ';
-    }
-
-    cout<<'\n'<<"kozosose ";
-    int csp1,csp2;
-    cin >> csp1 >>csp2;
-    cout <<csp1 << " es " <<csp2<<"nek: ";
-    cout <<kozosos(APA,h,csp1,csp2)<<'\n';
-
-
-    int maxi=0;
-    int a;
-    for(int i=0; i<h; i++)
-    {
-        a=magassag(APA,h,i)-1;
-        if(maxi<a) maxi=a;
-    }
-    cout << "magassag = "<<a;
+    beolvas(BAL,JOBB,h);
 
     /*
-    int frek2[100]={0};
-    int hossz=0;
-    azonosszint(APA,frek2,0,h,hossz);
-
-    for(int i=0; i<=hossz; i++)
+    int level[100]={0};
+    cout << "levelek: ";
+    levelek(BAL,JOBB,h,level);
+    for(int i=0; i<h; i++)
     {
-        cout << i <<".szint: ";
-        for(int j=0; j<h; j++)
-        {
-            if(APA[j]==i)
-            cout << j <<' ';
-        }
-        cout <<'\n';
+        if(level[i]!=0) cout << i << ' ';
     }
-*/
+    cout << '\n';
+    */
+    int gy=0;
 
+    /*
+    preorder(BAL,JOBB,gy);
+    cout << '\n';
+    inorder(BAL,JOBB,gy);
+    cout << '\n';
+    postorder(BAL,JOBB,gy);
+    */
+
+    //cout << "magassag: " << magassag(BAL,JOBB,0,0,0);
 
     return 0;
 }
